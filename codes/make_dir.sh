@@ -38,6 +38,7 @@ void print( ){
 }
 int main() {
 	
+	cout << "Accepted!" <<endl;
     return 0;
 }
 EOL
