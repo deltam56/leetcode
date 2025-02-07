@@ -1,5 +1,5 @@
 CXX := g++
-CXXFLAGS := -std=c++17 -Wall
+CXXFLAGS := -std=c++23 -Wall
 DBGFLAGS := -g
 
 SRCS := $(wildcard *.cpp)
@@ -17,4 +17,4 @@ all: $(OBJS) $(DBG_OBJS)
 	$(CXX) $(CXXFLAGS) $(DBGFLAGS) $< -o $@
 
 clean:
-	rm -f $(OBJS) $(DBG_OBJS)
+	rm -rf $(OBJS) $(DBG_OBJS) *.dSYM
