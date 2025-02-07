@@ -32,12 +32,14 @@ cat <<EOL > "$cpp_file"
 
 #include <iostream>
 #include <cassert>
+#include <vector>
 
 void print( ){
 	
 }
 int main() {
-	
+	Solution sol;	
+
 	cout << "Accepted!" <<endl;
     return 0;
 }
