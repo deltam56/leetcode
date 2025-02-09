@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     2364_Count_Number_of_Bad_Pairs_debug
+relocations:     []
+...

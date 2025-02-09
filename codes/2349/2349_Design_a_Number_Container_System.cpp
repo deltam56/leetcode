@@ -54,12 +54,14 @@ public:
 	}
 
 	void change(int index, int number) {
-		numhash[index] = number;
+		if(numhash[number]<index)
+			numhash[number] = index;
 	}
 
 	int find(int number) {
-		int mindex = numhash.find(number);
-		return mindex;
+		if(numhash[number] != NULL)
+			return numhash[number];
+		return -1;
 	}
 };
 
@@ -78,11 +80,17 @@ void print(vector <int> ans, vector <int> res ){
 
 	assert(ans == res);
 }
-
-constexpr unsigned int Hash(const char* s);
+constexpr unsigned int Hash(const char* str) {
+    unsigned int hash = 8603; // 초기값 설정
+    while (*str) {
+        hash = static_cast<unsigned int>(*str) + 0xEDB8832Full * hash;
+        str++;
+    }
+    return hash;
+}
 
 int main() {
-	NumberContainers sol;	
+
 	vector <int> ans;
 	vector <int> res;
 	vector <string> opstr;
@@ -95,15 +103,16 @@ int main() {
 	for (int i = 0;i<opstr.size();i++){
 		switch (Hash(opstr[i])){
 			case Hash("NumberContainers"):
-				res.push_back(sol.NumberContainers());
+				NumberContainers sol;	
 				break;
 			case Hash("find"):
 				res.push_back(sol.find(args[i]));
 				break;
 			case Hash("change"):
-				res.push_back(sol.change(args[i][0],args[i][1]));
+				res.push_back(NULL);
+				sol.change(args[i][0],args[i][1]);
 				break;
-			default:
+			defaults:
 				cout << "Something gonna be wrong!!" <<endl;
 
 		}
