@@ -42,29 +42,27 @@
 #include <iostream>
 #include <cassert>
 #include <vector>
+#include <string>
 #include <unordered_map>
+#include <set>
 using namespace std;
-
 class NumberContainers {
-private:
-	unordered_map <int,int> numhash;
+
 public:
-	NumberContainers() {
-		numhash.clear();
-	}
-
-	void change(int index, int number) {
-		if(numhash[number]<index)
-			numhash[number] = index;
-	}
-
-	int find(int number) {
-		if(numhash[number] != NULL)
-			return numhash[number];
-		return -1;
-	}
+    unordered_map<int, int> ind_num;
+    unordered_map<int, set<int>> num_inds;
+    void change(int index, int number) {
+        auto it = ind_num.find(index);
+        if (it != end(ind_num))
+            num_inds[it->second].erase(index);
+        ind_num[index] = number;
+        num_inds[number].insert(index);
+    }
+    int find(int number) {
+        auto it = num_inds.find(number);
+        return it == end(num_inds) || it->second.empty() ? -1 : *begin(it->second);
+    }
 };
-
 
 void print(vector <int> ans, vector <int> res ){
 
@@ -80,15 +78,15 @@ void print(vector <int> ans, vector <int> res ){
 
 	assert(ans == res);
 }
-constexpr unsigned int Hash(const char* str) {
-    unsigned int hash = 8603; // 초기값 설정
-    while (*str) {
-        hash = static_cast<unsigned int>(*str) + 0xEDB8832Full * hash;
-        str++;
-    }
-    return hash;
+#if 0
+constexpr unsigned int HashA(const char* str) {
+	unsigned int hash = 8603; // 초기값 설정
+	while (*str) {
+		hash = static_cast<unsigned int>(*str) + 0xEDB8832Full * hash;
+		str++;
+	}
+	return hash;
 }
-
 int main() {
 
 	vector <int> ans;
@@ -101,20 +99,16 @@ int main() {
 	ans = {NULL, -1, NULL, NULL, NULL, NULL, 1, NULL, 2};
 
 	for (int i = 0;i<opstr.size();i++){
-		switch (Hash(opstr[i])){
-			case Hash("NumberContainers"):
-				NumberContainers sol;	
-				break;
-			case Hash("find"):
-				res.push_back(sol.find(args[i]));
-				break;
-			case Hash("change"):
-				res.push_back(NULL);
-				sol.change(args[i][0],args[i][1]);
-				break;
-			defaults:
-				cout << "Something gonna be wrong!!" <<endl;
+		if (opstr[i] == "NumberContainers") {
 
+			// 이미 sol 객체가 있으므로 아무것도 하지 않음
+		} else if (opstr[i] == "find") {
+			res.push_back(sol.find(args[i][0])); // args[i][0] 사용
+		} else if (opstr[i] == "change") {
+			res.push_back(0); // NULL 대신 0 사용
+			sol.change(args[i][0], args[i][1]);
+		} else {
+			cout << "Something went wrong!!" << endl;
 		}
 	}
 
@@ -122,3 +116,32 @@ int main() {
 	cout << "Accepted!" <<endl;
 	return 0;
 }
+#else
+int main()
+{
+	NumberContainers nc;
+	int ret;
+
+	ret = nc.find(10);
+	assert(ret == -1);
+	cout << ret << endl;
+
+	nc.change(2, 10);
+	nc.change(1, 10);
+	nc.change(3, 10);
+	nc.change(5, 10);
+	// Number 10 is at the indices 1, 2, 3, and 5. Since the smallest index
+	// that is filled with 10 is 1, we return 1.
+	ret = nc.find(10);
+	assert(ret == 1);
+	cout << ret << endl;
+
+	nc.change(1, 20);
+
+	ret = nc.find(10);
+	assert(ret == 2);
+	cout << ret << endl;
+
+	return 0;
+}
+#endif
