@@ -90,10 +90,9 @@ public:
 			int digitSum = sumOfDigits(num);
 			if (maxNum.count(digitSum)) {
 				res = max(res, num + maxNum[digitSum]);
-				maxNum[digitSum] = max(maxNum[digitSum], num);
-			} else {
-				maxNum[digitSum] = num;
+
 			}
+			maxNum[digitSum] = max(maxNum[digitSum], num);
 		}
 
 
