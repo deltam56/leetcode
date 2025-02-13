@@ -34,10 +34,10 @@ cat <<EOL > "$cpp_file"
 #include <iostream>
 #include <cassert>
 #include <vector>
+#include <print>
 
-void print( ){
-	
-}
+using namespace std; //편의성위해..
+
 int main() {
 	Solution sol;	
 
