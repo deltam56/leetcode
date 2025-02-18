@@ -55,6 +55,7 @@ Follow-up: Can you implement both GetProduct and Add to work in O(1) time comple
 
 using namespace std; //편의성위해..
 
+#if 0
 class ProductOfNumbers {
 private:
 	forward_list<int> nums;
@@ -74,7 +75,30 @@ public:
         return product;
     }
 };
+#else
+class ProductOfNumbers {
+private:
+	vector<int> prefix_prod {1};
 
+public:
+	ProductOfNumbers() {
+
+	}
+
+	void add(int num) {
+		if (num == 0)
+			prefix_prod = {1};
+		else
+			prefix_prod.push_back(prefix_prod.back() * num);
+	}
+
+	int getProduct(int k) {
+		if (k >= prefix_prod.size())
+			return 0;
+		return prefix_prod.back() / prefix_prod[prefix_prod.size() - 1 - k];
+	}
+};
+#endif
 /**
  * Your ProductOfNumbers object will be instantiated and called as such:
  * ProductOfNumbers* obj = new ProductOfNumbers();
@@ -110,8 +134,6 @@ int main() {
 		}
 	}
 	printV(ans,res);
-
-	
 
 	cout << "Accepted!" <<endl;
     return 0;
