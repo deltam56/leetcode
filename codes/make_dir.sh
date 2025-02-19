@@ -27,14 +27,15 @@ touch "$cpp_file"
 
 # 기본 C++ 코드 추가
 cat <<EOL > "$cpp_file"
-/*
-
-*/
+/**
+*
+**/
 
 #include <iostream>
 #include <cassert>
 #include <vector>
 #include <print>
+#include <string>
 
 using namespace std; //편의성위해..
 
