@@ -42,10 +42,9 @@
 #include <string>
 
 using namespace std; //편의성위해..
+#if 0
 class Solution {
 private:
-
-	
 	void setCheckBinary(vector<string>& nums,vector<bool>& check){
 		for(string& num : nums){
 			int convertedNumber = stoi(num, nullptr, 2);
@@ -70,7 +69,19 @@ public:
 		return "";
     }
 };
+#else
+class Solution {
+public:
+	string findDifferentBinaryString(vector<string>& nums) {
+		string res = nums[0];
 
+		for (int i = 0; i < nums.size(); ++i)
+			res = nums[i][i] ^ 1;
+
+		return res;
+	}
+};
+#endif
 
 int main() {
 	Solution sol;
