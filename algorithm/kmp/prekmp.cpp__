@@ -1,0 +1,49 @@
+/**
+ * Knuth-Morris-Pratt (KMP) Algorithm
+ *  - https://www-igm.univ-mlv.fr/~lecroq/string/node8.html#SECTION0080
+ */
+#include <vector>
+#include <cassert>
+#include <iostream>
+#include <print>
+using namespace std;
+
+/* Preprocess the pattern to create the partial match table. This table helps
+ * in skipping unnecessary character comparisons during the search. */
+void pre_kmp(string& target, vector<int>& index)
+{
+	int size = target.size();
+	index.resize(size);
+	int j = 0;
+	for (int i = 1; i<size ; i++){
+		while(j>0 && target[i] != target[j])
+			j = index[j-1];
+		if(target[i] == target[j])
+			index[i] = ++j;
+	}
+
+};
+
+int main()
+{
+	string target;
+	string str;
+	vector<int> failueVector;
+
+	target = "abacaaba";
+	println("target : {} ", target);
+	pre_kmp(target,failueVector); 
+	println("failue vector : {}",failueVector);
+
+	target = "GCAGAGAG";
+	println("target : {} ", target);
+	pre_kmp(target,failueVector); 
+	println("failue vector : {}",failueVector);
+
+	target = "gagggagg";
+	println("target : {} " ,target);
+	pre_kmp(target,failueVector); 
+	println("failue vector : {}",failueVector);
+	return 0;
+}
+

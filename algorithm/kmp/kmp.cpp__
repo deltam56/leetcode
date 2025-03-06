@@ -1,0 +1,112 @@
+/**
+ * Knuth-Morris-Pratt (KMP) Algorithm
+ *  - https://www-igm.univ-mlv.fr/~lecroq/string/node8.html#SECTION0080
+ */
+#include <vector>
+#include <cassert>
+#include <iostream>
+
+using namespace std;
+
+/* Preprocess the pattern to create the partial match table. This table helps
+ * in skipping unnecessary character comparisons during the search. */
+void pre_kmp(string& target, vector<int>& index)
+{
+	const int m = target.length();
+
+	index[0] = -1;  // No proper prefix
+	/*
+	 * Iterate through the pattern and update index[i].
+	 *  - i: track the current position in target.
+	 *  - j: track the length of the longest prefix-suffix.
+	 *  - If there is a mismatch, backtrack using index[j].
+	 *  - If target[i] == target[j], update index[i] using index[j].
+	 *  - Otherwise, set index[i] = j.
+	 *
+	 *                                     m
+	 *        i :  0  1  2  3  4  5  6  7  8
+	 * target[i]:  G  C  A  G  A  G  A  G
+	 *  index[i]: -1  0  0 -1  1 -1  1 -1  1
+	 */
+	for (int i = 0, j = -1; i < m; ) {
+		while (j > -1 and target[j] != target[i])
+			j = index[j];   // Backtrack
+		i++;
+		j++;
+
+		if (target[i] == target[j])
+			index[i] = index[j];    // Optimization
+		else
+			index[i] = j;
+	}
+}
+
+vector<int> kmp(string& target, string& str)
+{
+	const int m = target.length();
+	const int n = str.length();
+	/* index stores the longest proper prefix that is also a suffix for
+	 * substrings of target. */
+	vector<int> index(m + 1, 0);
+	vector<int> res;
+
+	pre_kmp(target, index);
+
+	/*
+	 * Search for occurrences of the pattern (target) in the text (str)
+	 * using the precomputed failure function.
+	 *  - i: track the position in target.
+	 *  - j: track the position in str.
+	 *  - index: used for skpping redundant character comparisons.
+	 */
+	for (int i = 0, j = 0; j < n; ) {
+		/* If a mismatch occurs, use the index table to skip comparisons. */
+		while (i > -1 and target[i] != str[j])
+			i = index[i];
+		i++;
+		j++;
+
+		if (i >= m) {
+			res.push_back(j - i);
+			i = index[i];
+		}
+	}
+
+	return res;
+}
+
+void print(const vector<int>& ret, const vector<int>& ans);
+
+int main()
+{
+	string target;
+	string str;
+	vector<int> ret;
+	vector<int> ans;
+
+	str = "GCATCGCAGAGAGTATACAGTACG";
+	target = "GCAGAGAG";
+	ret = kmp(target, str);
+	ans = {5};
+	print(ret, ans);
+
+	target = "gagggagg";
+	str = "alskdjf alskdjflas gagggagg lkasjdflkasd lasjdflaskjd gagggagg";
+	ret = kmp(target, str);
+	ans = {19, 54};
+	print(ret, ans);
+
+	return 0;
+}
+
+void print(const vector<int>& ret, const vector<int>& ans)
+{
+	cout << "{";
+	for (int i = 0; i < ans.size(); ++i) {
+		assert(ret[i] == ans[i]);
+		cout << ret[i];
+		if (i != ans.size() - 1)
+			cout << ",";
+	}
+	cout << "}" << endl;
+}
