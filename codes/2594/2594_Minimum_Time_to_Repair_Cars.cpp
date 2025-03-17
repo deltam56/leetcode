@@ -42,22 +42,44 @@
 #include <vector>
 #include <print>
 #include <string>
+#include <cmath>
 
 using namespace std; //편의성위해..
 					 //
 class Solution {
+bool ispossible(long long time,vector<int>& ranks,int cars){
+	int sum= 0;
+	for(int r : ranks){
+		sum += sqrt(time/r);
+		if(sum >= cars)
+			return true;
+	}
+	return false;
+}
 public:
 	long long repairCars(vector<int>& ranks, int cars) {
 		long long res=0;
 
-		
+		long long l = 1;
+		long long r = (*max_element(ranks.begin(),ranks.end())) * (long long)cars * (long long)cars;;
+		long long mid;
 
+		while(l <= r){
+			mid = l + (r-l) / 2;
+			if(ispossible(mid,ranks,cars)){
+				r = mid-1;
+				res = mid;
+			} else {
+				l = mid+1;
+			}
+		}
 		return res;
 	}
 };
 
 int main() {
 	Solution sol;
+	
 	vector<int> ranks;
 	int cars;
 	long long res;
