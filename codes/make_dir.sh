@@ -40,7 +40,7 @@ cat <<EOL > "$cpp_file"
 using namespace std; //편의성위해..
 
 int main() {
-	Solution sol;	
+	Solution sol;
 
 	cout << "Accepted!" <<endl;
     return 0;
