@@ -74,28 +74,36 @@ public:
     }
 };
 #else
+#include <algorithm>
+
 class Solution {
+private:
+	vector<pair<int, int>> mergeIntervals(vector<vector<int>>& meetings) {
+		vector<pair<int, int>> intervals;
+
+		sort(begin(meetings), end(meetings));
+		intervals.push_back({meetings[0][0], meetings[0][1]});
+
+		for (int i = 1; i < meetings.size(); ++i) {
+			if (intervals.back().second + 1 >= meetings[i][0]) // Overlapped
+				intervals.back().second = max(intervals.back().second,
+						meetings[i][1]);
+			else // Non-overlapped
+				 intervals.push_back({meetings[i][0], meetings[i][1]});
+		}
+
+		return intervals;
+	}
+
 public:
     int countDays(int days, vector<vector<int>>& meetings) {
-        map<int, int> diff;  // 차분 정보만 저장
-        for (auto& m : meetings) {
-            diff[m[0] - 1]++;
-            diff[m[1]]--;
-        }
-        int res = 0;
-        int curr = 0;
-        int prev = 0;
-        for (auto& [day, delta] : diff) {
-            if (curr == 0 && day > prev) {
-                res += day - prev;  // 비어있는 구간 계산
-            }
-            curr += delta;
-            prev = day;
-        }
-        if (curr == 0 && prev < days) {
-            res += days - prev;
-        }
-        return res;
+		vector<pair<int, int>> intervals = mergeIntervals(meetings);
+		int cnt = 0;
+
+		for (const auto& [s, e] : intervals)
+			cnt += e - s + 1;
+
+		return days - cnt;
     }
 };
 #endif
