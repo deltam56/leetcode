@@ -34,9 +34,9 @@
 * 
 * Constraints:
 * 
-* 1 <= questions.length <= 105
+* 1 <= questions.length <= 10^5
 * questions[i].length == 2
-* 1 <= pointsi, brainpoweri <= 105
+* 1 <= points_i, brainpower_i <= 10^5
 **/
 
 #include <iostream>
@@ -47,43 +47,42 @@
 #include <queue>
 
 using namespace std; //편의성위해..
-#if 0
+
+#ifdef TOPDOWN_DP
 class Solution {
 private:
-	void find(priority_queue<long long>& leaf,long long val,
-			  int index, vector<vector<int>>& questions){
-		if (index >= questions.size()) {
-			leaf.push(val);
-			return;
-		}
-		find(leaf,val + questions[index][0], index + questions[index][1] + 1, questions);
-		find(leaf,val, index + 1, questions);
+	long long dfs(vector<vector<int>>& questions, vector<int>& memo, int i) {
+		if (i >= questions.size())
+			return 0;
+
+		if (memo[i])
+			return memo[i];
+
+		return memo[i] = max(dfs(questions, memo, i + 1), questions[i][0] +
+				dfs(questions, memo, i + 1 + questions[i][1]));
 	}
+
 public:
     long long mostPoints(vector<vector<int>>& questions) {
-        priority_queue<long long> leaf;
-		find(leaf,0,0,questions);
-		return leaf.top();
+		vector<int> memo(200001, 0);
+		return dfs(questions, memo, 0);
     }
 };
-#else
-
+#endif
+#ifdef BOTTOMUP_DP
+// Bottom-up DP (Tabulization)
 class Solution {
 public:
-    long long mostPoints(vector<vector<int>>& questions) {
-        int n = questions.size();
-        vector<long long> dp(n + 1, 0);
-        for (int i = n - 1; i >= 0; --i) {
-            int point = questions[i][0];
-            int brain = questions[i][1];
-            long long next = i + brain + 1 < n ? dp[i + brain + 1] : 0;
-            dp[i] = max(dp[i + 1], point + next);
-        }
+	long long mostPoints(vector<vector<int>>& questions) {
+		vector<int> dp(200001, 0);
 
-        return dp[0];
-    }
+		for (int i = questions.size() - 1; i >= 0; --i)
+			dp[i] = max(dp[i + 1], questions[i][0] + dp[i + 1 + questions[i][1]]);
+
+		return dp[0];
+
+	}
 };
-
 #endif
 int main() {
 	Solution sol;
