@@ -46,13 +46,14 @@
 #include <unordered_map>
 
 using namespace std; //편의성위해..
+#if 0
 struct pair_hash {
 	size_t operator()(const pair<int, int>& p) const {
 		return hash<int>()(p.first) ^ hash<int>()(p.second);
 	}
 };
 
-#if 0
+
 class Solution {
 private:
 	int findPathCount(unordered_map<pair<int,int>, bool,pair_hash>& footPrint,
@@ -90,7 +91,7 @@ public:
 
     }
 };
-#else
+
 class Solution {
 public:
     vector<int> maxPoints(vector<vector<int>>& grid, vector<int>& queries) {
@@ -131,6 +132,63 @@ public:
         return res;
     }
 };
+#else
+#include <queue>
+#include <map>
+
+class Solution {
+public:
+	vector<int> maxPoints(vector<vector<int>>& grid, vector<int>& queries) {
+		vector<pair<int, int>> directions {{-1,0},{1,0},{0,-1},{0,1}};
+		const int m = grid.size();
+		const int n = grid[0].size();
+
+		/* Popped by grid[i][j] in ascending order.
+		 * {grid[i][j], i, j} */
+		auto comp = [](const tuple<int, int, int>& a, const tuple<int, int, int>& b) {
+			return get<0>(a) > get<0>(b); };
+		priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>,
+			decltype(comp)> min_heap(comp);
+		// {grid[i][j], frequency}
+		map<int, int> prefix_sum; // -> sort in ascending order
+		//front {{1:1},{2:2},{3:2},{5:3},{7:1}} back
+		int curr = 1;
+
+		min_heap.push({grid[0][0], 0, 0});
+		grid[0][0] = 0;
+
+		// BFS
+		while (!min_heap.empty()) {
+			auto [val, r, c] = min_heap.top();
+			min_heap.pop();
+
+			curr = max(curr, val);
+			prefix_sum[curr]++;
+
+			for (const auto& [dx, dy] : directions) {
+				int nr = r + dx;
+				int nc = c + dy;
+
+				if (nr < 0 or nr >= m or nc < 0 or nc >= n or grid[nr][nc] == 0)
+					continue;
+
+				min_heap.push({grid[nr][nc], nr, nc});
+				grid[nr][nc] = 0;
+			}
+		}
+
+		for (auto it = next(begin(prefix_sum)); it != end(prefix_sum); ++it)
+			it->second += prev(it)->second;
+
+		transform(begin(queries), end(queries), begin(queries),
+			[&](const int& val) {
+				auto it = prefix_sum.lower_bound(val);
+				return it == begin(prefix_sum) ? 0 : prev(it)->second; });
+
+		return queries;
+	}
+};
+
 #endif
 int main() {
 	Solution sol;
