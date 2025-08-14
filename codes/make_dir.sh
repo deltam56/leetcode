@@ -9,7 +9,7 @@ problem_number=$(echo "$input" | awk -F'. ' '{print $1}')
 # 문제 제목 추출 및 변환 (공백을 _로 변경, 특수문자 제거)
 problem_title=$(echo "$input" | cut -d' ' -f2- | tr ' ' '_' | tr -cd '[:alnum:]_')
 
-dirname=${problem_number}_unsolved
+dirname=${problem_number}
 # 디렉터리 생성
 mkdir -p "$dirname"
 
