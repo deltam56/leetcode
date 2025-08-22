@@ -37,12 +37,11 @@ cat <<EOL > "$cpp_file"
 #include <print>
 #include <string>
 
-using namespace std; //편의성위해..
+using namespace std;
 
 int main() {
 	Solution sol;
 
-	cout << "Accepted!" <<endl;
     return 0;
 }
 EOL
