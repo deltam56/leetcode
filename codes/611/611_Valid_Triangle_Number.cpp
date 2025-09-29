@@ -32,6 +32,7 @@
 #include <algorithm>
 
 using namespace std;
+#if 0
 class Solution {
 public:
     int triangleNumber(vector<int>& nums) {
@@ -51,6 +52,27 @@ public:
 		return count;
     }
 };
+#else
+class Solution {
+public:
+    int triangleNumber(vector<int>& nums) {
+		// 내림 정렬
+		// 가장 큰값 -> 다음값 + 다다음값 가능?
+		int count = 0;
+		sort(nums.begin(),nums.end(),[](int a,int b){return a>b;});
+
+		for(int i = 0 ; i < nums.size(); ++i){
+			for(int j = i+1 ; j < nums.size(); ++j){
+				for(int k = j+1; k < nums.size(); ++k){
+					if(nums[i] >= nums[j]+nums[k]) break;
+					count ++;
+				}
+			}
+		}
+		return count;
+    }
+};
+#endif
 int main() {
 	Solution sol;
 	vector<int> nums;
