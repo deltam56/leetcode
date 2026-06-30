@@ -3,21 +3,24 @@
 * Given a string s consisting only of characters a, b and c.
 * 
 * Return the number of substrings containing at least one occurrence of all these characters a, b and c.
+* 
+* 
+* 
 * Example 1:
 * 
 * Input: s = "abcabc"
 * Output: 10
-* Explanation: The substrings containing at least one occurrence of the characters a, b and c are "abc", "abca", "abcab", "abcabc", "bca", "bcab", "bcabc", "cab", "cabc" and "abc" (again). 
+* Explanation: The substrings containing at least one occurrence of the characters a, b and c are "abc", "abca", "abcab", "abcabc", "bca", "bcab", "bcabc", "cab", "cabc" and "abc" (again).
 * Example 2:
 * 
 * Input: s = "aaacb"
 * Output: 3
-* Explanation: The substrings containing at least one occurrence of the characters a, b and c are "aaacb", "aacb" and "acb". 
+* Explanation: The substrings containing at least one occurrence of the characters a, b and c are "aaacb", "aacb" and "acb".
 * Example 3:
 * 
 * Input: s = "abc"
 * Output: 1
-*  
+* 
 * 
 * Constraints:
 * 
@@ -30,79 +33,53 @@
 #include <vector>
 #include <print>
 #include <string>
-#include <map>
-#include <algorithm>
+#include <unordered_map>
 
-using namespace std; //편의성위해..
+using namespace std;
 
-#if 0
 class Solution {
 public:
-	int numberOfSubstrings(string s) {
-		int res = 0;
-		int left = 0;
-		map<char, int> abc({{'a', 0}, {'b', 0}, {'c', 0}});
-		int m = s.length();
+    int numberOfSubstrings(string s) {
+        int counts[3] = {0, 0, 0};
+        int left = 0;
+        int answer = 0;
 
-		for (int right = 0; right < m; ++right) {
-			abc[s[right]]++;
+        for (int right = 0; right < static_cast<int>(s.length()); ++right) {
+            counts[s[right] - 'a']++;
 
-			while (abc['a'] > 0 && abc['b'] > 0 && abc['c'] > 0) {
-				res += m - right;
-				abc[s[left]]--;
-				left++;
-			}
-		}
-		return res;
-	}
+            while (counts[0] > 0 &&
+                   counts[1] > 0 &&
+                   counts[2] > 0) {
+                counts[s[left] - 'a']--;
+                left++;
+            }
+
+            answer += left;
+        }
+
+        return answer;
+    }
 };
-#else
-class Solution {
-public:
-	int numberOfSubstrings(string s) {
-		int res = 0;
-		int left = 0;
-		map<char, int> abc({{'a', 0}, {'b', 0}, {'c', 0}});
-		int m = s.length();
-
-		for (int right = 0; right < m; ++right) {
-			abc[s[right]]++;
-
-			while (abc['a'] > 0 && abc['b'] > 0 && abc['c'] > 0) {
-				res += m - right;
-				abc[s[left]]--;
-				left++;
-			}
-		}
-		return res;
-	}
-};
-#endif
 
 int main() {
 	Solution sol;
-	string s = "";
-	int ans;
-	int res;
+	string s;
+	int ans,res;
 
 	s = "abcabc";
 	ans = 10;
 	res = sol.numberOfSubstrings(s);
-	println("ans : {} , res : {} ",ans, res);
-	assert(ans == res);
+	println("ans : {}, res : {}",ans,res);
 
 	s = "aaacb";
 	ans = 3;
 	res = sol.numberOfSubstrings(s);
-	println("ans : {} , res : {} ",ans, res);
-	assert(ans == res);
+	println("ans : {}, res : {}",ans,res);
 
 	s = "abc";
 	ans = 1;
 	res = sol.numberOfSubstrings(s);
-	println("ans : {} , res : {} ",ans, res);
-	assert(ans == res);
+	println("ans : {}, res : {}",ans,res);
 
-	cout << "Accepted!" <<endl;
     return 0;
 }
